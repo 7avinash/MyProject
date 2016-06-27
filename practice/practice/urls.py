@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^login/', ObtainAuthToken.as_view(), name='login'),
     url(r'^', include('d3.urls')),
     url(r'^', include('user_groups.urls')),
+    url(r'^', include('post.urls')),
 ]
 
 if settings.DEBUG:

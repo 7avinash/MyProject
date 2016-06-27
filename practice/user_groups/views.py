@@ -10,7 +10,7 @@ from rest_framework import status
 class UserGroupView(APIView):
 
 	def get(self, request, format=None):
-		queryset = UserGroup.objects.all()#filter(owner=request.user)
+		queryset = UserGroup.objects.filter(owner=request.user)
 		serializer = UserGroupSerializer(queryset, many=True)
 		return Response(serializer.data)
 

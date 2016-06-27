@@ -26,8 +26,8 @@ class UserDetail(models.Model):
 
 class UserGroup(models.Model):
 	name = models.CharField(max_length=120)
-	owner = models.ForeignKey(UserDetail, related_name='owner')
-	members = models.ManyToManyField(UserDetail, related_name='members', blank=True)
+	owner = models.ForeignKey(User, related_name='owner')
+	members = models.ManyToManyField(User, related_name='members', blank=True)
 
 	def __str__(self):
 		return self.name
