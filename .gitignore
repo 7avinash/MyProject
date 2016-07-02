@@ -89,3 +89,4 @@ ENV/
 .ropeproject
 
 /practice/practice/settings.py
+backup

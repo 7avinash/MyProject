@@ -4,6 +4,7 @@ package com.metis.avinash.WebUtils;
 import com.google.gson.JsonObject;
 import com.metis.avinash.Models.GroupModel;
 import com.metis.avinash.Models.LoginModel;
+import com.metis.avinash.Models.PostModel;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,8 @@ import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.POST;
+import retrofit.http.Path;
+import retrofit.http.Query;
 
 
 /** Created by "V Avinash" on 6/1/2016.*/
@@ -27,8 +30,8 @@ public interface metisApi {
     void getGroups(@Header("Authorization") String token, Callback<List<GroupModel>> Response);
 
 
-    @GET("/posts/")
-    void getPosts(@Header("Authorization") String token, Callback<String> Response);
+    @GET("/posts/{institute}")
+    void getPosts(@Header("Authorization") String token, @Path("institute") int institute, @Query("limit") int limit, @Query("offset") int offset, Callback<List<PostModel>> Response);
 
 
 //    @Multipart

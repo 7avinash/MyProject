@@ -23,6 +23,7 @@ import android.widget.ExpandableListView;
 import android.widget.ListView;
 
 import com.metis.avinash.Models.GroupModel;
+import com.metis.avinash.Models.PostModel;
 import com.metis.avinash.WebUtils.RestClient;
 
 import java.util.ArrayList;
@@ -35,8 +36,10 @@ import retrofit.client.Response;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    ListView listView;
+    ListView listView, postView;
     Menu menu;
+    String token = "Token ";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        token = token.concat(SharedPref.getAccessToken(getBaseContext()));
         new getPost().execute();
 
 //        menu = navigationView.getMenu();
@@ -74,7 +77,6 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... params) {
 
-            String token = SharedPref.getAccessToken(getBaseContext());
 
             RestClient.get().getGroups(token, new Callback<List<GroupModel>>() {
                 @Override
@@ -97,6 +99,29 @@ public class MainActivity extends AppCompatActivity
 
           return null;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        RestClient.get().getPosts(token, 1, 10, 0, new Callback<List<PostModel>>() {
+            @Override
+            public void success(List<PostModel> postModels, Response response) {
+                postView = (ListView) findViewById(R.id.lv_posts);
+                ArrayList arrayList = new ArrayList();
+                for (PostModel postModel : postModels) {
+                    arrayList.add(postModel.title);
+                }
+                ArrayAdapter arrayAdapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, arrayList);
+                postView.setAdapter(arrayAdapter);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+
     }
 
     @Override

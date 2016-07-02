@@ -45,13 +45,13 @@ public class LoginActivity extends AppCompatActivity {
                 public void onClick(View v) {
 
                     HashMap<String, String> loginMap = new HashMap<String, String>();
-                    Log.d("username", username.getText().toString());
                     loginMap.put("username", username.getText().toString());
                     loginMap.put("password", password.getText().toString());
 
 
                     RestClient.get().loginUser(loginMap, new Callback<LoginModel>() {
                         @Override
+
                         public void success(LoginModel loginModel, Response response) {
                             String auth_token = loginModel.token;
                             SharedPref.setAccessToken(getBaseContext(), auth_token);
