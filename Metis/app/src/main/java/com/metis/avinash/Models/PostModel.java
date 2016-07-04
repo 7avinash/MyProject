@@ -10,11 +10,11 @@ import com.google.gson.annotations.Expose;
  */
 
 @Table(name = "posts")
-public class PostModel {
+public class PostModel extends Model {
 
-//    @Expose
-//    @Column(name = "id")
-//    public long id;
+    @Expose
+    @Column(name = "mid")
+    public long id;
 
     @Expose
     @Column(name = "user")
@@ -36,16 +36,17 @@ public class PostModel {
     @Column(name = "image")
     public String image;
 
-//    public PostModel(){
-//        super();
-//    }
-//
-//    public PostModel(long id, String user, String institute, String title, String content, String image){
-//        this.id = id;
-//        this.user = user;
-//        this.institute = institute;
-//        this.title = title;
-//        this.content = content;
-//        this.image = image;
-//    }
+    public PostModel(){
+        super();
+    }
+
+    public PostModel(long id, String user, String institute, String title, String content, String image){
+        super();
+        this.id = id;
+        this.user = user;
+        this.institute = institute;
+        this.title = title;
+        this.content = content;
+        this.image = image;
+    }
 }

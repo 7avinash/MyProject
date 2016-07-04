@@ -12,7 +12,7 @@ public class RestClient {
     private static metisApi REST_CLIENT;
 
     private static String ROOT =
-            "http://192.168.11.110:8000/";
+            "http://192.168.43.193:8000/";
 
     static {
         setupRestClient();

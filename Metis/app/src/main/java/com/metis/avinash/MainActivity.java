@@ -22,6 +22,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import com.activeandroid.query.Select;
 import com.metis.avinash.Models.GroupModel;
 import com.metis.avinash.Models.PostModel;
 import com.metis.avinash.WebUtils.RestClient;
@@ -39,6 +40,10 @@ public class MainActivity extends AppCompatActivity
     ListView listView, postView;
     Menu menu;
     String token = "Token ";
+    int count;
+    List<PostModel> postModels;
+    ArrayList<String> arrayList=new ArrayList<String>();
+    ArrayAdapter arrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +70,16 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         token = token.concat(SharedPref.getAccessToken(getBaseContext()));
+        postModels = new Select().from(PostModel.class).execute();
+        count = postModels.size();
+        System.out.println(count);
+        for (PostModel postModel: postModels){
+            arrayList.add(postModel.title);
+        }
         new getPost().execute();
-
+        postView = (ListView) findViewById(R.id.lv_posts);
+        arrayAdapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, arrayList);
+        postView.setAdapter(arrayAdapter);
 //        menu = navigationView.getMenu();
 //        SubMenu subMenu = menu.addSubMenu("Groups");
 //        MenuItem group1 = subMenu.add(listView);
@@ -85,6 +98,7 @@ public class MainActivity extends AppCompatActivity
                     ArrayList arrayList = new ArrayList();
                     for (GroupModel groupModel : groupModels) {
                         arrayList.add(groupModel.name);
+
                     }
                     ArrayAdapter adapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, arrayList);
                     listView.setAdapter(adapter);
@@ -104,16 +118,17 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        RestClient.get().getPosts(token, 1, 10, 0, new Callback<List<PostModel>>() {
+        RestClient.get().getPosts(token, 1, 4, count, new Callback<List<PostModel>>() {
             @Override
             public void success(List<PostModel> postModels, Response response) {
-                postView = (ListView) findViewById(R.id.lv_posts);
-                ArrayList arrayList = new ArrayList();
                 for (PostModel postModel : postModels) {
                     arrayList.add(postModel.title);
+                    postModel.save();
                 }
-                ArrayAdapter arrayAdapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, arrayList);
-                postView.setAdapter(arrayAdapter);
+                arrayAdapter.notifyDataSetChanged();
+                count+=postModels.size();
+                System.out.println(count);
+
             }
 
             @Override
