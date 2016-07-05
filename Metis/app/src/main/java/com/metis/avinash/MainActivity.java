@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuInflater;
 import android.view.SubMenu;
 import android.view.View;
@@ -21,13 +23,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.activeandroid.query.Select;
+import com.metis.avinash.Adapters.PostAdapter;
 import com.metis.avinash.Models.GroupModel;
 import com.metis.avinash.Models.PostModel;
 import com.metis.avinash.WebUtils.RestClient;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit.Callback;
@@ -37,20 +43,22 @@ import retrofit.client.Response;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    ListView listView, postView;
+    ListView listView;
+    RecyclerView postView;
     Menu menu;
     String token = "Token ";
     int count;
     List<PostModel> postModels;
     ArrayList<String> arrayList=new ArrayList<String>();
     ArrayAdapter arrayAdapter;
+    PostAdapter postAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -70,16 +78,27 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         token = token.concat(SharedPref.getAccessToken(getBaseContext()));
-        postModels = new Select().from(PostModel.class).execute();
+        postModels = new Select().from(PostModel.class).orderBy("id DESC").execute();
         count = postModels.size();
         System.out.println(count);
         for (PostModel postModel: postModels){
-            arrayList.add(postModel.title);
+            arrayList.add(0,postModel.title);
         }
         new getPost().execute();
-        postView = (ListView) findViewById(R.id.lv_posts);
-        arrayAdapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, arrayList);
-        postView.setAdapter(arrayAdapter);
+        postView = (RecyclerView) findViewById(R.id.rv_posts);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getBaseContext());
+        postView.setHasFixedSize(true);
+        postView.setLayoutManager(layoutManager);
+        postAdapter = new PostAdapter(postModels, new PostAdapter.OnItemClickListener(){
+            @Override
+            public void onItemClick(PostModel item, int position) {
+                Intent i = new Intent(getBaseContext(), PostDetailActivity.class);
+                i.putExtra("item",item.toString());
+                startActivity(i);
+                Toast.makeText(getBaseContext(), "Item Clicked", Toast.LENGTH_LONG).show();
+            }
+        });
+        postView.setAdapter(postAdapter);
 //        menu = navigationView.getMenu();
 //        SubMenu subMenu = menu.addSubMenu("Groups");
 //        MenuItem group1 = subMenu.add(listView);
@@ -120,13 +139,11 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         RestClient.get().getPosts(token, 1, 4, count, new Callback<List<PostModel>>() {
             @Override
-            public void success(List<PostModel> postModels, Response response) {
-                for (PostModel postModel : postModels) {
-                    arrayList.add(postModel.title);
-                    postModel.save();
-                }
-                arrayAdapter.notifyDataSetChanged();
-                count+=postModels.size();
+            public void success(List<PostModel> mpostModels, Response response) {
+                Collections.reverse(mpostModels);
+                postModels.addAll(0, mpostModels);
+                postAdapter.notifyDataSetChanged();
+                count+=mpostModels.size();
                 System.out.println(count);
 
             }

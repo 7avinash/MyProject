@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.metis.avinash">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".WebUtils.MyApplication"
         android:allowBackup="true"
@@ -15,17 +16,15 @@
             android:value="metis.db" />
         <meta-data
             android:name="AA_MODELS"
-            android:value="com.metis.avinash.Models.PostModel,"/>
+            android:value="com.metis.avinash.Models.PostModel," />
         <meta-data
             android:name="AA_DB_VERSION"
             android:value="1" />
 
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,6 +32,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PostDetailActivity"></activity>
     </application>
 
 </manifest>
